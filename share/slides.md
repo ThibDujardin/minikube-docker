@@ -71,7 +71,7 @@ Note:
 <img style="background-color:#FFFFFF" width="100%" height="50%" src="img/docker-desktop-pricing.png"/>
 
 Note:
-* Avant de commencer, je vous propose un petit historique
+* Before start - Some history fact
   * Aug 31, 2021 - Annoucement pricing / updated terms effective
   * January 31, 2022 - end of the grace period 
   * Mac os users & windows users
@@ -83,7 +83,7 @@ Note:
 
 <section>
     <p class="fragment highlight-green">Small businesses</p>
-    <p class="fragment highlight-red">Individual developper</p>
+    <p class="fragment highlight-red">Individual developer</p>
     <p class="fragment highlight-red">Development teams 5+</p>
     <p class="fragment highlight-red">Medium and large businesses 50+</p>
 </section>
@@ -225,16 +225,16 @@ minikube completion zsh
     --container-runtime=docker \
     --no-kubernetes \
     --vm=true \
-    --cpus 2 \
+    --cpus 6 \
     --memory 8000
 ```
 
 Note: 
 
-* `-drive=hyperkit` best drive to use withmacos can be change to `VirtualBox` etc. You can even use your local docker (Linux only)
+* `-drive=hyperkit` best drive to use with macos can be change to `VirtualBox` etc. You can even use your local docker (Linux only)
 * `--container-runtime=docker` the runtime we use on the minikube's vm. Can be `containerd` or `cri-o` 
-* `--cpus 2` at least 2 cpu for a K8S cluster
-* `--memory` at least 2 Go required
+* `--cpus 6` at least 6 cpu for a K8S cluster 
+* `--memory` at least 8 Go required for K8S 
 
 ----
 
@@ -255,18 +255,74 @@ minikube ssh
 ```
 
 Note:
-* For some unknown reason some time the `systemd-networkd` wont reastart 
+* For some unknown reason some time the `systemd-networkd` wont restart 
 
 ----
 
 ### Workaround to use `localhost`
 
+This allow you to use `minikube.local` as host 
+
+<div class="fragment"> 
+<pre>
+<code>echo -e "$(minikube ip)\tminikube.local" | sudo tee -a /etc/hosts</code>
+</pre>
+</div>
+
+<div class="fragment"> 
+<pre>
+<code>echo -e "$(minikube ip)\t{MY_HOST_NAME}" | sudo tee -a /etc/hosts</code>
+</pre>
+</div>
 
 
+//TODO : add the script file
+
+Note: 
+* Do not forget to remove the old one if you do it manually
 
 ----
+
+### Connection to the Docker
+
+<div class="fragment"> 
+<pre>
+<code>eval $(minikube docker-env)</code>
+</pre>
+</div>
+
+
+<div class="fragment"> 
+<pre>
+<code>export DOCKER_TLS_VERIFY="1"
+export DOCKER_HOST="tcp://192.168.64.23:2376"
+export DOCKER_CERT_PATH="/Users/THIBAULD/.minikube/certs"
+export MINIKUBE_ACTIVE_DOCKERD="minikube"
+# To point your shell to minikube's docker-daemon, run:
+# eval $(minikube -p minikube docker-env)</code>
+</pre>
+</div>
+
+`minikube.local`
+
+Note:
+* The classic `localhost` wont work
+* This command can be required some time, that's why we need it in the .zshrc
+
+----
+
+<div class=""> 
+<pre>
+<code>echo -e "\n$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc
+echo -e "\neval \$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc</code>
+</pre>
+</div>
+
+----
+
 ### Mounting volume
 
 
+----
 
-
+### Known issue
