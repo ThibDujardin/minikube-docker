@@ -7,7 +7,7 @@
 }
 
 #logo {
-	width: 50%;
+	width: 20%;
 	vertical-align:middle;
 	background-color: transparent;
 	border:0;
@@ -37,6 +37,7 @@
 
 <div>
 <img id="logo" alt="logo" src="img/docker-desktop.png" />
+<img id="logo" alt="logo" src="img/minikube-vm.png" />
 </div>
 
 @SfeirLille - 02/2022
@@ -47,14 +48,17 @@ Note:
 
 <div>
   <h2>About me</h2>
-  <pre>
+  <pre class="yaml">
     <code id=me>
-  who : "Thibauld Dujardin"
+  who : Thibauld Dujardin
   mission : Dev Back / DevOps 
   certs :
     gcp :
-        - name : "architect"
-  hobbies : "sports"
+        - name : architect
+  hobbies : 
+    - sports
+    - domotic
+    - video games
     </code>
   </pre>
 </div>
@@ -79,7 +83,7 @@ Note:
 
 ----
 
-## Who is impacted
+## Who is impacted // TODO to check 
 
 <section>
     <p class="fragment highlight-green">Small businesses</p>
@@ -115,6 +119,7 @@ https://github.com/abiosoft/colima
 Note:
 - based on Lima
   - Lima can be considered as a some sort of unofficial "containerd for Mac".
+  - Lima launches Linux virtual machines with automatic file sharing and port forwarding (similar to WSL2), and containerd.
 - Limitations
   - Some command like docker compose still don't work very well ( complicated docker compose )
   - Still in a early stage
@@ -153,14 +158,16 @@ Note:
 - Port Forwarding
 - Volume mounts
 - Kubernetes
-- Maintainer : RedHat
+- Maintainer : Containers https://github.com/containers
 
 https://podman.io/
 
-Note: 
+Note:
 - Limitations
   - Docker compose still not supported entirely (podman-compose)
   - Difficult customization
+  - open-source
+  - Buildah - a tool that facilitates building
 
 ----
 
@@ -168,13 +175,9 @@ Note:
     <img width="50%" src="img/minikube.svg"/>
 </div>
 
-- DNS
-- NodePorts
-- ConfigMaps et Secrets
+- "Drag & Drop"
 - Dashboards
 - Container Runtime: Docker, CRI-O, et containerd
-- Activation de la CNI (Container Network Interface)
-- Ingress
 - part of the kubernetes project
 - Volume
 - Kubernetes can be turned off
@@ -231,6 +234,7 @@ minikube completion zsh
 
 Note: 
 
+* the completion is not required anymore / it has been fixed 
 * `-drive=hyperkit` best drive to use with macos can be change to `VirtualBox` etc. You can even use your local docker (Linux only)
 * `--container-runtime=docker` the runtime we use on the minikube's vm. Can be `containerd` or `cri-o` 
 * `--cpus 6` at least 6 cpu for a K8S cluster 
@@ -264,13 +268,13 @@ Note:
 This allow you to use `minikube.local` as host 
 
 <div class="fragment"> 
-<pre>
+<pre class="bash">
 <code>echo -e "$(minikube ip)\tminikube.local" | sudo tee -a /etc/hosts</code>
 </pre>
 </div>
 
 <div class="fragment"> 
-<pre>
+<pre class="bash">
 <code>echo -e "$(minikube ip)\t{MY_HOST_NAME}" | sudo tee -a /etc/hosts</code>
 </pre>
 </div>
@@ -286,14 +290,14 @@ Note:
 ### Connection to the Docker
 
 <div class="fragment"> 
-<pre>
+<pre class="bash">
 <code>eval $(minikube docker-env)</code>
 </pre>
 </div>
 
 
 <div class="fragment"> 
-<pre>
+<pre class="bash">
 <code>export DOCKER_TLS_VERIFY="1"
 export DOCKER_HOST="tcp://192.168.64.23:2376"
 export DOCKER_CERT_PATH="/Users/THIBAULD/.minikube/certs"
@@ -304,7 +308,7 @@ export MINIKUBE_ACTIVE_DOCKERD="minikube"
 </div>
 
 <div class="fragment"> 
-<pre>
+<pre class="bash">
 <code>echo -e "\neval \$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc</code>
 </pre>
 </div>
@@ -320,13 +324,13 @@ Note:
 ### Mounting volume
 
 <div class="fragment"> 
-<pre>
-<code>minikube mount <source directory>:<target directory></code>
+<pre class="bash">
+<code>minikube mount {source directory}:{target directory}</code>
 </pre>
 </div>
 
 <div class="fragment"> 
-<pre>
+<pre class="bash">
 <code data-line-numbers="8-9">
 <script type="text/template">minikube start \
     --driver=hyperkit \
@@ -335,28 +339,104 @@ Note:
     --vm=true \
     --cpus 6 \
     --memory 8000
-    --mount-string <source directory>:<target directory> 
+    --mount-string {source directory>:{target directory} 
     --mount</script> 
 </code>
 </pre>
 </div>
 
-----
+<div class="fragment"> 
+<pre class="bash">
+<code data-line-numbers="8-9|10">
+<script type="text/template">minikube start \
+    --driver=hyperkit \
+    --container-runtime=docker \
+    --no-kubernetes \
+    --vm=true \
+    --cpus 6 \
+    --memory 8000
+    --mount-string /Users/THIBAULD/Documents/GitHub:/Users/THIBAULD/Documents/GitHub 
+    --mount
+    -p test</script> 
+</code>
+</pre>
+</div>
+
+Note:
+* `-p test` use another profile named `test`, the default one is named `minikube`
+
+---
 
 ### Known issue
 
-- `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?` 
-This issue happen because your docker CLI 
-Possible fix : 
-- Reset the current context to use the Minikube engine : `eval $(minikube docker-env)`
-- Check that the IP in `/etc/hosts/` is still the same as the one returned by `minikube ip`. If not the edit the file and delete the line with the old ip eg: `192.168.1.0    minikube.local` and `192.168.1.0    kafka` and rerun the **commande** into the `/etc/hosts/` part. 
-To do it run `sudo vi /etc/hosts` make sure to do it as root (sudo)
-Don’t forget to rerun the eval command
+```shell
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. 
+Is the docker daemon running?
+```
 
---- 
+```shell
+Failed to pull image "localhost:5000/nginx": rpc error: code = Unknown desc = Error response from daemon: Get http://localhost:5000/v2/: dial tcp 127.0.0.1:5000: connect: connection refused 
+```
+
+```
+Docker-compose
+```
+
+### Fix
+
+<div class="fragment"> 
+<pre class="bash">
+<code>
+<script type="text/template">eval $(minikube docker-env)</script> 
+</code>
+</pre>
+</div>
+
+<div class="fragment"> 
+<pre class="bash">
+<code>
+<script type="text/template">minikube ip
+</script> 
+</code>
+</pre>
+
+<pre class="bash">
+<code>
+<script type="text/template">/etc/hosts/
+  
+  192.168.64.24	minikube.local
+</script> 
+</code>
+</pre>
+</div>
+
+Note:
+*  Reset the current context to use the Minikube engine : `eval $(minikube docker-env)`
+*  Check that the IP in `/etc/hosts/` is still the same as the one returned by `minikube ip` (sudo) & eval cmd
+*  Check that the DNS is set right inside the vm / the sysmtemd has restarted
+* Docker compose
+  * Some things are different
+  
+---
 
 ## Demo 
 
---- 
+---
 
-## Question
+<iframe src="https://giphy.com/embed/090VWZvZoOyn0xFtXo" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+
+Note: 
+
+Tl;dr
+
+* drag & drop docker solution 
+* kubernetes available too 
+* suitable for most use case 
+* rootless env 
+* free 
+
+---
+
+## Questions ?
+
+<iframe src="https://giphy.com/embed/k6r6lTYIL9j9ZeRT51" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
