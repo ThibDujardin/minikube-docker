@@ -303,6 +303,12 @@ export MINIKUBE_ACTIVE_DOCKERD="minikube"
 </pre>
 </div>
 
+<div class="fragment"> 
+<pre>
+<code>echo -e "\neval \$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc</code>
+</pre>
+</div>
+
 `minikube.local`
 
 Note:
@@ -311,18 +317,46 @@ Note:
 
 ----
 
-<div class=""> 
+### Mounting volume
+
+<div class="fragment"> 
 <pre>
-<code>echo -e "\n$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc
-echo -e "\neval \$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc</code>
+<code>minikube mount <source directory>:<target directory></code>
+</pre>
+</div>
+
+<div class="fragment"> 
+<pre>
+<code data-line-numbers="8-9">
+<script type="text/template">minikube start \
+    --driver=hyperkit \
+    --container-runtime=docker \
+    --no-kubernetes \
+    --vm=true \
+    --cpus 6 \
+    --memory 8000
+    --mount-string <source directory>:<target directory> 
+    --mount</script> 
+</code>
 </pre>
 </div>
 
 ----
 
-### Mounting volume
-
-
-----
-
 ### Known issue
+
+- `Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?` 
+This issue happen because your docker CLI 
+Possible fix : 
+- Reset the current context to use the Minikube engine : `eval $(minikube docker-env)`
+- Check that the IP in `/etc/hosts/` is still the same as the one returned by `minikube ip`. If not the edit the file and delete the line with the old ip eg: `192.168.1.0    minikube.local` and `192.168.1.0    kafka` and rerun the **commande** into the `/etc/hosts/` part. 
+To do it run `sudo vi /etc/hosts` make sure to do it as root (sudo)
+Don’t forget to rerun the eval command
+
+--- 
+
+## Demo 
+
+--- 
+
+## Question
