@@ -101,7 +101,7 @@ Note:
 
 ---
 
-## Aternatives 
+## Alternatives 
 
 ----
 
@@ -111,7 +111,6 @@ Note:
 - Simple CLI interface
 - Docker and Containerd support
 - Port Forwarding
-- Volume mounts
 - Kubernetes
 
 https://github.com/abiosoft/colima
@@ -123,6 +122,9 @@ Note:
 - Limitations
   - Some command like docker compose still don't work very well ( complicated docker compose )
   - Still in a early stage
+  - mount volume complicated 
+  - perf 
+  - community active
 
 ----
 
@@ -191,7 +193,7 @@ Note:
 
 ---
 
-### Requirement
+## Minikube Requirement
 
 - minikube 
 - hyperkit 
@@ -212,7 +214,7 @@ Note:
 
 ----
 
-### Let's run
+## Let's run
 
 Activate the minikube completion for zsh : 
 
@@ -222,15 +224,19 @@ minikube completion zsh
 
 ----
 
-```shell
-  minikube start \
+<pre class="bash">
+<code data-line-numbers="1|2|3|4|5|6|7">
+<script type="text/template">minikube start \
     --driver=hyperkit \
     --container-runtime=docker \
     --no-kubernetes \
     --vm=true \
     --cpus 6 \
-    --memory 8000
-```
+    --memory 8000</script> 
+</code>
+</pre>
+
+ 
 
 Note: 
 
@@ -375,7 +381,11 @@ Is the docker daemon running?
 ```
 
 ```shell
-Failed to pull image "localhost:5000/nginx": rpc error: code = Unknown desc = Error response from daemon: Get http://localhost:5000/v2/: dial tcp 127.0.0.1:5000: connect: connection refused 
+Failed to pull image "localhost:5000/nginx": 
+rpc error: 
+  code = Unknown 
+desc = Error response from daemon: 
+  Get http://localhost:5000/v2/: dial tcp 127.0.0.1:5000: connect: connection refused 
 ```
 
 ```
