@@ -51,7 +51,7 @@ Note:
   <pre class="yaml">
     <code id=me>
   who : Thibauld Dujardin
-  mission : Dev Back / DevOps 
+  mission : Dev Backend / DevOps 
   certs :
     gcp :
         - name : architect
@@ -66,31 +66,32 @@ Note:
 Note:
 - Thibauld Dujardin
 - Dev Backend / Devops chez Decathlon / Feature Masterpice
-- Chez sfeir depuis Septembre 2020 
+- Chez sfeir depuis Septembre 2020
 - Aujourd'hui je vous proposer de parler de la migration Docker Desktop vers Minikube
 
 ---
-## Migration context
 
-<img style="background-color:#FFFFFF" width="100%" height="50%" src="img/docker-desktop-pricing.png"/>
+## Context
+
+<iframe src="https://giphy.com/embed/25KEhzwCBBFPb79puo" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 
 Note:
 * Before start - Some history fact
-  * Aug 31, 2021 - Annoucement pricing / updated terms effective
+  * Aug 31, 2021 - Annoucement pricing / updated terms effective 
   * January 31, 2022 - end of the grace period 
-  * Mac os users & windows users
-  * RootLess VM
+  * Mac os users & windows users 
+    * Docker is for made for linux kernerl
+  * Alternative is mostly a RootLess VM
+* DockerDesktop is the only one impacted
+  * Not Docker Engine nor Moby 
+    * Moby is an open framework created by Docker to assemble specialized container systems without reinventing the wheel. It provides a “lego set” of dozens of standard components and a framework for assembling them into custom platforms.
+    containerd by default 
 
 ----
 
-## Who is impacted // TODO to check 
+## Who is impacted
 
-<section>
-    <p class="fragment highlight-green">Small businesses</p>
-    <p class="fragment highlight-red">Individual developer</p>
-    <p class="fragment highlight-red">Development teams 5+</p>
-    <p class="fragment highlight-red">Medium and large businesses 50+</p>
-</section>
+<img style="background-color:#FFFFFF" width="100%" height="50%" src="img/docker-desktop-pricing.png"/>
 
 Note: 
 - small businesses
@@ -98,10 +99,18 @@ Note:
     - personal use
     - education
     - non-commercial open source projects
+- Individual developer
+- Development teams 5+
+- Medium and large businesses 50+
 
 ---
 
 ## Alternatives 
+
+- Colima
+- Rancher Desktop
+- Podman
+- Minikube
 
 ----
 
@@ -123,7 +132,7 @@ Note:
   - Some command like docker compose still don't work very well ( complicated docker compose )
   - Still in a early stage
   - mount volume complicated 
-  - perf 
+  - bad performance
   - community active
 
 ----
@@ -139,6 +148,7 @@ Note:
 - Kubernetes Made Simple
 - Desktop application
 - Port Forwarding
+- open-source desktop application
 
 https://rancherdesktop.io/
 
@@ -159,17 +169,20 @@ Note:
 - Root or rootless
 - Port Forwarding
 - Volume mounts
-- Kubernetes
 - Maintainer : Containers https://github.com/containers
 
 https://podman.io/
 
 Note:
+- Podman is a utility provided as part of the libpod library. 
+  It can be used to create and maintain containers. 
+- Windows - WSL2 - Mac - linux
 - Limitations
   - Docker compose still not supported entirely (podman-compose)
   - Difficult customization
   - open-source
-  - Buildah - a tool that facilitates building
+- Buildah - a tool that facilitates building
+- `--privileged`
 
 ----
 
@@ -214,13 +227,9 @@ Note:
 
 ----
 
-## Let's run
+## Let's go
 
-Activate the minikube completion for zsh : 
-
-```shell
-minikube completion zsh 
-```
+<iframe src="https://giphy.com/embed/BpGWitbFZflfSUYuZ9" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 
 ----
 
@@ -232,11 +241,20 @@ minikube completion zsh
     --no-kubernetes \
     --vm=true \
     --cpus 6 \
-    --memory 8000</script> 
+    --memory 8000</script>
 </code>
 </pre>
 
- 
+
+<div class="fragment"> 
+<pre class="bash">
+<code>minikube start
+minikube stop
+minikube delete
+minikube ip
+minikube pause</code>
+</pre>
+</div>
 
 Note: 
 
@@ -269,24 +287,14 @@ Note:
 
 ----
 
-### Workaround to use `localhost`
-
-This allow you to use `minikube.local` as host 
+### Workaround to `localhost`
 
 <div class="fragment"> 
 <pre class="bash">
-<code>echo -e "$(minikube ip)\tminikube.local" | sudo tee -a /etc/hosts</code>
+<code>sudo sed -i '' "/minikube/d" /etc/hosts
+echo "$(minikube ip)\tminikube.local" | sudo tee -a /etc/hosts</code>
 </pre>
 </div>
-
-<div class="fragment"> 
-<pre class="bash">
-<code>echo -e "$(minikube ip)\t{MY_HOST_NAME}" | sudo tee -a /etc/hosts</code>
-</pre>
-</div>
-
-
-//TODO : add the script file
 
 Note: 
 * Do not forget to remove the old one if you do it manually
@@ -301,7 +309,6 @@ Note:
 </pre>
 </div>
 
-
 <div class="fragment"> 
 <pre class="bash">
 <code>export DOCKER_TLS_VERIFY="1"
@@ -315,7 +322,7 @@ export MINIKUBE_ACTIVE_DOCKERD="minikube"
 
 <div class="fragment"> 
 <pre class="bash">
-<code>echo -e "\neval \$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc</code>
+<code>echo "\neval \$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc</code>
 </pre>
 </div>
 
@@ -345,7 +352,7 @@ Note:
     --vm=true \
     --cpus 6 \
     --memory 8000
-    --mount-string {source directory>:{target directory} 
+    --mount-string {source directory}:{target directory} 
     --mount</script> 
 </code>
 </pre>
@@ -381,11 +388,11 @@ Is the docker daemon running?
 ```
 
 ```shell
-Failed to pull image "localhost:5000/nginx": 
+Failed to pull image "registry.example.com:5000/nginx": 
 rpc error: 
   code = Unknown 
 desc = Error response from daemon: 
-  Get http://localhost:5000/v2/: dial tcp 127.0.0.1:5000: connect: connection refused 
+  Get http://registry.example.com:5000/v2/: dial tcp 127.0.0.1:5000: connect: connection refused 
 ```
 
 ```
@@ -406,14 +413,9 @@ Docker-compose
 <pre class="bash">
 <code>
 <script type="text/template">minikube ip
-</script> 
-</code>
-</pre>
-
-<pre class="bash">
-<code>
-<script type="text/template">/etc/hosts/
-  
+> 192.168.64.24
+ 
+cat /etc/hosts/
   192.168.64.24	minikube.local
 </script> 
 </code>
@@ -436,8 +438,6 @@ Note:
 <iframe src="https://giphy.com/embed/090VWZvZoOyn0xFtXo" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 
 Note: 
-
-Tl;dr
 
 * drag & drop docker solution 
 * kubernetes available too 
