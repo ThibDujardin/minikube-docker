@@ -125,8 +125,6 @@ Note:
 
 https://github.com/abiosoft/colima
 
-<iframe src="https://github.com/abiosoft/colima/blob/main/colima.gif" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-
 Note:
 - based on Lima
   - Containers in Lima. = Colima
@@ -155,8 +153,6 @@ Note:
 - open-source desktop application
 
 https://rancherdesktop.io/
-
-<iframe src="https://rancherdesktop.io/images/kubernetes-settings.png" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 
 Note: 
 - based on Lima
