@@ -77,7 +77,7 @@ Note:
 
 Note:
 * Before start - Some history fact
-  * Aug 31, 2021 - Annoucement pricing / updated terms effective 
+  * Aug 31, 2021 - Annoucement pricing / updated terms effective
   * January 31, 2022 - end of the grace period 
   * Mac os users & windows users 
     * Docker is for made for linux kernerl
@@ -86,6 +86,7 @@ Note:
   * Not Docker Engine nor Moby 
     * Moby is an open framework created by Docker to assemble specialized container systems without reinventing the wheel. It provides a “lego set” of dozens of standard components and a framework for assembling them into custom platforms.
     containerd by default 
+* Docker Machine is deprecated
 
 ----
 
@@ -95,7 +96,7 @@ Note:
 
 Note: 
 - small businesses
-    - fewer than 250 employees AND less than $10 million in revenue
+    - fewer than 250 employees OR less than $10 million in revenue
     - personal use
     - education
     - non-commercial open source projects
@@ -124,8 +125,11 @@ Note:
 
 https://github.com/abiosoft/colima
 
+<iframe src="https://github.com/abiosoft/colima/blob/main/colima.gif" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+
 Note:
 - based on Lima
+  - Containers in Lima. = Colima
   - Lima can be considered as a some sort of unofficial "containerd for Mac".
   - Lima launches Linux virtual machines with automatic file sharing and port forwarding (similar to WSL2), and containerd.
 - Limitations
@@ -151,6 +155,8 @@ Note:
 - open-source desktop application
 
 https://rancherdesktop.io/
+
+<iframe src="https://rancherdesktop.io/images/kubernetes-settings.png" width="480" height="400" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 
 Note: 
 - based on Lima
@@ -282,17 +288,6 @@ minikube ssh -- sudo systemctl restart systemd-networkd </script>
 minikube ssh -- sudo resolvectl dns docker0 8.8.8.8 8.8.4.4
 minikube ssh -- sudo resolvectl dns sit0 8.8.8.8 8.8.4.4</script>
 </code>
-</pre>
-</div>
-
-<div class="fragment"> 
-<pre class="bash">
-<code>minikube start
-minikube stop
-minikube delete
-minikube ip
-minikube pause
-minikube ssh</code>
 </pre>
 </div>
 
