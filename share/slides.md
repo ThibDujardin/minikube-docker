@@ -245,7 +245,6 @@ Note:
 </code>
 </pre>
 
-
 <div class="fragment"> 
 <pre class="bash">
 <code>minikube start
@@ -258,7 +257,6 @@ minikube pause</code>
 
 Note: 
 
-* the completion is not required anymore / it has been fixed 
 * `-drive=hyperkit` best drive to use with macos can be change to `VirtualBox` etc. You can even use your local docker (Linux only)
 * `--container-runtime=docker` the runtime we use on the minikube's vm. Can be `containerd` or `cri-o` 
 * `--cpus 6` at least 6 cpu for a K8S cluster 
@@ -267,27 +265,45 @@ Note:
 ----
 
 ### Pull images from external registry
-
-```shell
-minikube ssh -- sudo sed -i "/Network/aDNS=8.8.8.8" /etc/systemd/network/10-eth1.network
+<div class="fragment"> 
+<pre class="bash">
+<code>
+<script type="text/template">minikube ssh -- sudo sed -i "/Network/aDNS=8.8.8.8" /etc/systemd/network/10-eth1.network
 minikube ssh -- sudo sed -i "/Network/aDNS=8.8.8.8" /etc/systemd/network/20-dhcp.network
-minikube ssh -- sudo systemctl restart systemd-networkd 
-```
+minikube ssh -- sudo systemctl restart systemd-networkd </script>
+</code>
+</pre>
+</div>
 
-Manual restart :
+<div class="fragment"> 
+<pre class="bash">
+<code>
+<script type="text/template">minikube ssh -- sudo resolvectl dns eth0 8.8.8.8 8.8.4.4
+minikube ssh -- sudo resolvectl dns docker0 8.8.8.8 8.8.4.4
+minikube ssh -- sudo resolvectl dns sit0 8.8.8.8 8.8.4.4</script>
+</code>
+</pre>
+</div>
 
-```shell
-minikube ssh
-	sudo systemctl restart systemd-networkd 
-	exit
-```
+<div class="fragment"> 
+<pre class="bash">
+<code>minikube start
+minikube stop
+minikube delete
+minikube ip
+minikube pause
+minikube ssh</code>
+</pre>
+</div>
 
 Note:
-* For some unknown reason some time the `systemd-networkd` wont restart 
+* For some unknown reason some time the `systemd-networkd` wont restart
+* Both methods are valid
+* Only mandatory if there is a proxy that is already set up like Zscaler
 
 ----
 
-### Workaround to `localhost`
+### `localhost` ?
 
 <div class="fragment"> 
 <pre class="bash">
@@ -296,8 +312,22 @@ echo "$(minikube ip)\tminikube.local" | sudo tee -a /etc/hosts</code>
 </pre>
 </div>
 
+<div class="fragment">
+<pre class="bash">
+<code>
+<script type="text/template">minikube ip
+> 192.168.64.24
+ 
+cat /etc/hosts/
+  192.168.64.24	minikube.local
+</script>
+</code>
+</pre>
+</div>
+
 Note: 
 * Do not forget to remove the old one if you do it manually
+* not required if you use Virtualbox
 
 ----
 
@@ -325,8 +355,6 @@ export MINIKUBE_ACTIVE_DOCKERD="minikube"
 <code>echo "\neval \$(minikube -p minikube docker-env)" | sudo tee -a ~/.zshrc</code>
 </pre>
 </div>
-
-`minikube.local`
 
 Note:
 * The classic `localhost` wont work
@@ -370,7 +398,7 @@ Note:
     --memory 8000
     --mount-string /Users/THIBAULD/Documents/GitHub:/Users/THIBAULD/Documents/GitHub 
     --mount
-    -p test</script> 
+    -p test-mount</script> 
 </code>
 </pre>
 </div>
@@ -380,26 +408,12 @@ Note:
 
 ---
 
-### Known issue
+### known issues
 
 ```shell
-Cannot connect to the Docker daemon at unix:///var/run/docker.sock. 
+Cannot connect to the Docker daemon at tcp://192.168.64.23:2376. 
 Is the docker daemon running?
 ```
-
-```shell
-Failed to pull image "registry.example.com:5000/nginx": 
-rpc error: 
-  code = Unknown 
-desc = Error response from daemon: 
-  Get http://registry.example.com:5000/v2/: dial tcp 127.0.0.1:5000: connect: connection refused 
-```
-
-```
-Docker-compose
-```
-
-### Fix
 
 <div class="fragment"> 
 <pre class="bash">
@@ -409,16 +423,30 @@ Docker-compose
 </pre>
 </div>
 
+```shell
+Failed to pull image "registry.example.com:5000/nginx": 
+rpc error: 
+  code = Unknown 
+desc = Error response from daemon: 
+  Get http://registry.example.com:5000/v2/: 
+    dial tcp 127.0.0.1:5000: connect: connection refused 
+```
+
 <div class="fragment"> 
 <pre class="bash">
 <code>
-<script type="text/template">minikube ip
-> 192.168.64.24
- 
-cat /etc/hosts/
-  192.168.64.24	minikube.local
-</script> 
+<script type="text/template">> dns_setter</script> 
 </code>
+</pre>
+</div>
+
+```
+Docker-compose
+```
+
+<div class="fragment"> 
+<pre class="bash">
+It depends on the use case and what features you need
 </pre>
 </div>
 
