@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# this part allow minikube to pull images 
+minikube ssh -- sudo resolvectl dns eth0 8.8.8.8 8.8.4.4
+minikube ssh -- sudo resolvectl dns docker0 8.8.8.8 8.8.4.4
+minikube ssh -- sudo resolvectl dns sit0 8.8.8.8 8.8.4.4
